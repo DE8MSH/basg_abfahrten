@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#061525">
+  <meta name="description" content="BSAG Abfahrtsmonitor für Bremen – VBN-Abfahrtszeiten, Verspätungen und Countdown in einer Web-App.">
+  <title>BSAG Abfahrten – Bremen Live</title>
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./assets/style.css">
+  <script type="module" src="./assets/app.mjs"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="branding"><span class="brand-logo" aria-hidden="true"><span></span><span></span><span></span></span>
+        <div><div class="brand-title">BSAG <span class="brand-light">Abfahrten</span></div><div class="brand-caption">BREMEN · LIVE-ABFAHRTSMONITOR</div></div>
+      </div>
+      <div class="top-right"><span class="source-dot" id="sourceDot"></span><span id="connectionLabel">Verbindung wird geprüft</span><span class="top-clock" id="topClock">--:--</span></div>
+    </header>
+
+    <main>
+      <section class="control-card" aria-label="Einstellungen">
+        <form id="stationForm" class="station-form">
+          <label for="stationInput">HALTESTELLE</label>
+          <div class="search-row"><input id="stationInput" type="search" name="station" autocomplete="off" enterkeyhint="search" maxlength="100" placeholder="z. B. Bremen Marschstraße" required>
+          <button class="btn btn-primary" id="searchButton" type="submit"><span aria-hidden="true">⌕</span> Anzeigen</button></div>
+        </form>
+        <div class="actions">
+          <button class="btn btn-quiet" id="starButton" type="button" title="Haltestelle als Favorit speichern" aria-label="Favorit umschalten">☆ <span>Favorit</span></button>
+          <select id="favoritesSelect" aria-label="Gespeicherte Haltestellen"><option value="">Favoriten wählen</option></select>
+          <button class="btn btn-quiet" id="refreshButton" type="button" title="Manuell aktualisieren">↻ <span>Aktualisieren</span></button>
+          <button class="btn btn-quiet" id="fullscreenButton" type="button" title="Vollbild anzeigen">⛶ <span>Vollbild</span></button>
+        </div>
+        <div class="quick-stops" aria-label="Schnellauswahl">
+          <span>Beispiele</span>
+          <button data-stop="Bremen Marschstraße" type="button">Marschstraße</button>
+          <button data-stop="Bremen Domsheide" type="button">Domsheide</button>
+          <button data-stop="Bremen Hauptbahnhof" type="button">Hauptbahnhof</button>
+          <button data-stop="Bremen Am Brill" type="button">Am Brill</button>
+        </div>
+      </section>
+
+      <section class="board-shell" aria-label="Abfahrtsmonitor">
+        <div class="section-heading"><div><p class="overline">ECHTZEIT-ANZEIGE</p><h1 id="headingStation">Bremen Marschstraße</h1></div><div class="board-switch" role="group" aria-label="Ansichtsmodus">
+          <button type="button" class="switch is-active" id="nativeButton" aria-pressed="true">Eigene Anzeige</button>
+          <button type="button" class="switch" id="embedButton" aria-pressed="false">DBF-Ansicht</button>
+        </div></div>
+        <div id="messageBar" class="message" role="status" aria-live="polite"></div>
+
+        <div id="nativePanel" class="native-panel">
+          <div id="board" class="board" title="Klicken zum Aktualisieren (maximal einmal pro Minute)">
+            <div class="board-top"><div class="board-stop"><strong id="displayStation">Bremen Marschstraße</strong><span>BSAG / VBN</span></div><div class="board-right"><span class="live-pill"><span class="live-dot"></span>LIVE</span><span class="board-time" id="boardTime">--:--</span></div></div>
+            <div class="board-table-head"><span>IN</span><span>LINIE</span><span>ZIEL / RICHTUNG</span><span>ZEIT</span></div>
+            <div id="departureRows" class="departure-rows" role="table" aria-label="Nächste Abfahrten">
+              <div class="blank-state" role="row">Lade Abfahrten …</div>
+            </div>
+            <div class="board-footer"><span id="boardFooter">BSAG Abfahrten · Live-Daten von DBF/VBN</span><span class="board-footer-right">By DE8MSH</span></div>
+          </div>
+          <div class="board-bottom"><div class="legend"><span><i class="legend-dot green"></i> ab 10 Min.</span><span><i class="legend-dot yellow"></i> 6–9 Min.</span><span><i class="legend-dot red"></i> unter 6 Min.</span></div><div>Automatisch alle 60 Sekunden</div></div>
+        </div>
+
+        <div id="embedPanel" class="embed-panel" hidden><div class="embed-heading">Live-Ansicht des externen Abfahrtsdienstes DBF <a id="openDBF" href="https://dbf.finalrewind.org" rel="noopener noreferrer" target="_blank">Im neuen Tab öffnen ↗</a></div>
+          <iframe id="dbfFrame" title="DBF/VBN-Abfahrtsanzeige" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <div class="embed-caption">Diese Anzeige stammt direkt von dbf.finalrewind.org. Sie wird bei CORS-Sperren automatisch verwendet.</div>
+        </div>
+      </section>
+
+      <div class="lower-row"><section class="info-card"><span class="overline">DATENQUELLE</span><h2>VBN / db-infoscreen</h2><p id="infoStatus">Daten werden über eine öffentliche, extern betriebene Schnittstelle geladen. Kein API-Schlüssel erforderlich.</p><p class="muted tiny">Die Anwendung ist unabhängig von einem eigenen Server. Für Live-Abfahrten wird weiterhin eine Internetverbindung benötigt.</p></section>
+      <section class="info-card small-card"><span class="overline">ANZEIGE</span><h2>Dein Display – im Browser</h2><p>Countdown und Farblogik entsprechen deinem ESP32-Projekt. Der Zeitkern läuft als echtes WebAssembly-Modul.</p><span id="wasmStatus" class="wasm-label">WebAssembly wird geladen …</span></section></div>
+    </main>
+    <footer class="page-footer"><span>BSAG Abfahrten Web · Inoffizielles Projekt</span><span><a href="https://github.com/DE8MSH/BSAG_Abfahrten_Display" rel="noopener noreferrer" target="_blank">Quellprojekt auf GitHub ↗</a> · <a href="https://dbf.finalrewind.org/_about" rel="noopener noreferrer" target="_blank">DBF-Datenquelle ↗</a></span></footer>
+  </div>
+</body>
+</html>

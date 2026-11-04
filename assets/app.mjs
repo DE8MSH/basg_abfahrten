@@ -215,7 +215,7 @@ function renderDepartures() {
     row.className = 'departure-row' + (dep.cancelled ? ' cancelled-row' : '');
     row.setAttribute('role', 'row');
     const count = makeCell(`countdown color-${color}` + (dep.cancelled ? ' cancel' : mins === 0 ? ' now' : ''),
-      dep.cancelled ? 'AUS' : mins === -999 ? '--' : mins === 0 ? 'JETZT' : `+${mins}`);
+      dep.cancelled ? 'AUS' : mins === -999 ? '--' : mins === 0 ? 'JETZT' : String(mins));
     row.append(count);
     row.append(makeCell('line-value', dep.line));
     const dest = makeCell('destination');

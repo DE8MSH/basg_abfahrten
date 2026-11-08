@@ -41,7 +41,7 @@ Die Original-Firmware fragt folgende JSON-API ab:
 
 `https://dbf.finalrewind.org/Bremen%20Marschstra%C3%9Fe.json?hafas=VBN&admode=dep&rt=1&version=3`
 
-Die Web-App verwendet denselben Host, Provider, das Echtzeitflag und die JSON-v3-Version. Zusätzlich `limit=24`, damit mehrere nachrückende Abfahrten vorhanden sind. Der Dienst bittet um **maximal eine Anfrage pro Haltestelle pro Minute** (siehe https://dbf.finalrewind.org/). Deshalb 60-Sekunden-Takt auch beim manuellen Refresh. Countdown und Blinken laufen lokal ohne weitere Abfragen.
+Die Web-App verwendet denselben Host, Provider, das Echtzeitflag und die JSON-v3-Version. Zusätzlich `limit=40`, damit nach Ausfilterung abgelaufener Fahrten **bis zu 20 Abfahrten** angezeigt werden können. Im Vollbild ist die Liste scrollbar; bei weniger als sechs Fahrten bleiben bis zur ursprünglichen Mindesthöhe leere Zeilen. Der Dienst bittet um **maximal eine Anfrage pro Haltestelle pro Minute** (siehe https://dbf.finalrewind.org/). Deshalb 60-Sekunden-Takt auch beim manuellen Refresh. Countdown und Blinken laufen lokal ohne weitere Abfragen.
 
 **Wichtig: CORS!** Ein ESP32 kann die JSON-Datei über HTTPS abrufen, ein Browser auf GitHub Pages aber nur, wenn der fremde Server einen passenden `Access-Control-Allow-Origin`-Header sendet. JavaScript oder Emscripten können CORS nicht außer Kraft setzen. Ob dieser Header in der jeweiligen Live-Antwort enthalten ist, muss im veröffentlichten Browser geprüft werden.
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   departureUrl, cleanStation, epochFromHHMM, normalizeDepartures, berlinClock,
-  minutesUntilJS, colorCodeJS, parseEpoch,
+  minutesUntilJS, colorCodeJS, parseEpoch, MAX_VISIBLE_DEPARTURES, selectVisibleDepartures,
 } from '../assets/core.mjs';
 
 const NOW = Date.parse('2026-11-04T08:30:00Z') / 1000;
@@ -15,8 +15,23 @@ test('API-URL entspricht dem Original-Sketch, inklusive Umlaut und Provider VBN'
   assert.equal(url.searchParams.get('version'), '3');
   assert.equal(url.searchParams.get('rt'), '1');
   assert.equal(url.searchParams.get('admode'), 'dep');
+  assert.equal(url.searchParams.get('limit'), '40');
   assert.equal(new URL(departureUrl('Bremen Domsheide','html')).searchParams.get('mode'), 'infoscreen');
   assert.equal(cleanStation('  Bremen  Am  Brill   '), 'Bremen Am Brill');
+});
+
+test('Die Abfahrtstafel zeigt höchstens 20 echte Abfahrten, keine 20 Platzhalter', () => {
+  assert.equal(MAX_VISIBLE_DEPARTURES, 20);
+  const trips = Array.from({length: 26}, (_, i) => ({
+    eventEpoch: NOW + (i + 1) * 60, cancelled: false, line: String(i + 1),
+  }));
+  const result = selectVisibleDepartures([
+    {eventEpoch: NOW - 120, cancelled: false, line: 'ALT'}, ...trips,
+  ], NOW);
+  assert.equal(result.length, 20);
+  assert.equal(result[0].line, '1');
+  assert.equal(result[19].line, '20');
+  assert.equal(selectVisibleDepartures(trips.slice(0, 3), NOW).length, 3);
 });
 
 test('Countdown ist aufgerundet; JETZT bleibt 60 Sekunden sichtbar', () => {

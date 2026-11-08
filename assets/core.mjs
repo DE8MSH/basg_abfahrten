@@ -3,6 +3,7 @@ export const API_BASE = 'https://dbf.finalrewind.org';
 export const PROVIDER = 'VBN';
 export const DEFAULT_STOP = 'Bremen Marschstraße';
 export const REFRESH_MS = 60_000; // Vorgabe des Dienstes: eine Anfrage je Station und Minute.
+export const MAX_VISIBLE_DEPARTURES = 20; // Neue Obergrenze der Abfahrtstafel.
 export const BERLIN_TZ = 'Europe/Berlin';
 
 export function cleanStation(value) {
@@ -19,7 +20,7 @@ export function departureUrl(station, format = 'json') {
   url.searchParams.set('rt', '1');
   if (format === 'json') {
     url.searchParams.set('version', '3');
-    url.searchParams.set('limit', '24');
+    url.searchParams.set('limit', '40'); // Reserve, falls vergangene Fahrten herausgefiltert werden.
   } else {
     url.searchParams.set('mode', 'infoscreen');
     url.searchParams.set('hide_opts', '1');
@@ -123,6 +124,13 @@ export function normalizeDepartures(json, nowEpoch = Date.now() / 1000) {
   }
   rows.sort((a, b) => (a.eventEpoch ?? Infinity) - (b.eventEpoch ?? Infinity));
   return rows;
+}
+
+// Bis zu 20 tatsächlich kommende Fahrten anzeigen; die API kann mehr liefern.
+export function selectVisibleDepartures(departures, nowEpoch = Date.now() / 1000) {
+  return departures
+    .filter(dep => minutesUntilJS(dep.eventEpoch, nowEpoch, dep.cancelled) !== -1)
+    .slice(0, MAX_VISIBLE_DEPARTURES);
 }
 
 export function minutesUntilJS(eventEpoch, nowEpoch, cancelled) {

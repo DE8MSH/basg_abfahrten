@@ -1,9 +1,10 @@
 import {
   DEFAULT_STOP, REFRESH_MS, cleanStation, departureUrl, normalizeDepartures,
-  minutesUntilJS, colorCodeJS, berlinClock,
-} from './core.mjs';
+  minutesUntilJS, colorCodeJS, berlinClock, MAX_VISIBLE_DEPARTURES, selectVisibleDepartures,
+} from './core.mjs?v=20261108-20';
 
 const $ = (id) => document.getElementById(id);
+const MIN_PLACEHOLDER_ROWS = 6; // Leere Felder nur bis zur alten Display-Mindesthöhe.
 const state = {
   stop: DEFAULT_STOP, departures: [], lastAttempt: 0, lastSuccess: 0,
   loading: false, mode: 'native', wasm: null, favorites: [], generation: 0, abortController: null,
@@ -206,7 +207,7 @@ function makeCell(className, content) {
 }
 function renderDepartures() {
   const now = Math.floor(Date.now() / 1000);
-  const visible = state.departures.filter(dep => minutesUntil(dep.eventEpoch, now, dep.cancelled) !== -1).slice(0, 6);
+  const visible = selectVisibleDepartures(state.departures, now);
   const fragment = document.createDocumentFragment();
   for (const dep of visible) {
     const mins = minutesUntil(dep.eventEpoch, now, dep.cancelled);
@@ -242,8 +243,8 @@ function renderDepartures() {
     empty.setAttribute('role', 'row');
     fragment.append(empty);
   } else {
-    // Feste Display-Höhe (6 Zeilen wie auf dem ESP32); CSS macht die Darstellung responsiv.
-    for (let j = visible.length; j < 6; j++) {
+    // Mindestens 6 Zeilen bei wenig Verkehr, bei mehr Daten bis MAX_VISIBLE_DEPARTURES.
+    for (let j = visible.length; j < Math.min(MIN_PLACEHOLDER_ROWS, MAX_VISIBLE_DEPARTURES); j++) {
       const blank = document.createElement('div');
       blank.className = 'departure-row';
       blank.setAttribute('aria-hidden', 'true');

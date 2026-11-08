@@ -7,8 +7,8 @@
   <meta name="description" content="BSAG Abfahrtsmonitor für Bremen – VBN-Abfahrtszeiten, Verspätungen und Countdown in einer Web-App.">
   <title>BSAG Abfahrten – Bremen Live</title>
   <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./assets/style.css?v=20261104-2">
-  <script type="module" src="./assets/app.mjs"></script>
+  <link rel="stylesheet" href="./assets/style.css?v=20261108-20">
+  <script type="module" src="./assets/app.mjs?v=20261108-20"></script>
 </head>
 <body>
   <div class="shell">
@@ -52,12 +52,12 @@
           <div id="board" class="board" title="Klicken zum Aktualisieren (maximal einmal pro Minute)">
             <div class="board-top"><div class="board-stop"><strong id="displayStation">Bremen Marschstraße</strong><span>BSAG / VBN</span></div><div class="board-right"><span class="live-pill"><span class="live-dot"></span>LIVE</span><span class="board-time" id="boardTime">--:--</span></div></div>
             <div class="board-table-head"><span>IN</span><span>LINIE</span><span>ZIEL / RICHTUNG</span><span>ZEIT</span></div>
-            <div id="departureRows" class="departure-rows" role="table" aria-label="Nächste Abfahrten">
+            <div id="departureRows" class="departure-rows" role="table" aria-label="Nächste 20 Abfahrten">
               <div class="blank-state" role="row">Lade Abfahrten …</div>
             </div>
             <div class="board-footer"><span id="boardFooter">BSAG Abfahrten · Live-Daten von DBF/VBN</span><span class="board-footer-right">By DE8MSH</span></div>
           </div>
-          <div class="board-bottom"><div class="legend"><span><i class="legend-dot green"></i> ab 10 Min.</span><span><i class="legend-dot yellow"></i> 6–9 Min.</span><span><i class="legend-dot red"></i> unter 6 Min.</span></div><div>Automatisch alle 60 Sekunden</div></div>
+          <div class="board-bottom"><div class="legend"><span><i class="legend-dot green"></i> ab 10 Min.</span><span><i class="legend-dot yellow"></i> 6–9 Min.</span><span><i class="legend-dot red"></i> unter 6 Min.</span></div><div>Maximal 20 Abfahrten · Automatisch alle 60 Sekunden</div></div>
         </div>
 
         <div id="embedPanel" class="embed-panel" hidden><div class="embed-heading">Live-Ansicht des externen Abfahrtsdienstes DBF <a id="openDBF" href="https://dbf.finalrewind.org" rel="noopener noreferrer" target="_blank">Im neuen Tab öffnen ↗</a></div>

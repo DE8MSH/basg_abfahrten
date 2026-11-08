@@ -23,6 +23,7 @@ export function departureUrl(station, format = 'json') {
     url.searchParams.set('limit', '40'); // Reserve, falls vergangene Fahrten herausgefiltert werden.
   } else {
     url.searchParams.set('mode', 'infoscreen');
+    url.searchParams.set('limit', String(MAX_VISIBLE_DEPARTURES));
     url.searchParams.set('hide_opts', '1');
     url.searchParams.set('hide_navbar', '1');
   }

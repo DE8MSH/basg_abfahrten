@@ -17,6 +17,7 @@ test('API-URL entspricht dem Original-Sketch, inklusive Umlaut und Provider VBN'
   assert.equal(url.searchParams.get('admode'), 'dep');
   assert.equal(url.searchParams.get('limit'), '40');
   assert.equal(new URL(departureUrl('Bremen Domsheide','html')).searchParams.get('mode'), 'infoscreen');
+  assert.equal(new URL(departureUrl('Bremen Domsheide','html')).searchParams.get('limit'), '20');
   assert.equal(cleanStation('  Bremen  Am  Brill   '), 'Bremen Am Brill');
 });
 

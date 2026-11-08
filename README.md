@@ -25,7 +25,7 @@ Die statischen Web-Dateien werden von GitHub Pages über HTTPS ausgeliefert. Liv
 4. Unter **Settings → Pages** bei **Build and deployment** `Deploy from a branch` auswählen; Branch `main`, Ordner `/(root)` wählen und speichern.
 5. Anschließend lautet die erwartete Adresse:
 
-   https://de8msh.github.io/BSAG_Abfahrten_Display/
+   [https://de8msh.github.io/BSAG_Abfahrten_Display/](https://de8msh.github.io/basg_abfahrten/)
 
    Die Site existiert erst, nachdem GitHub Pages tatsächlich aktiviert und veröffentlicht wurde.
 
